@@ -1,4 +1,4 @@
-package com.wenhuaijun.netstudydemo;
+package com.wenhuaijun.netstudydemo.main;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +20,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.wenhuaijun.netstudydemo.R;
+import com.wenhuaijun.netstudydemo.config.API;
+import com.wenhuaijun.netstudydemo.model.ModelCallback;
+import com.wenhuaijun.netstudydemo.model.NetRequest;
+import com.wenhuaijun.netstudydemo.model.QuestionModel;
+import com.wenhuaijun.netstudydemo.model.bean.Question;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +39,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,View.OnClickListener {
@@ -276,7 +283,7 @@ public class MainActivity extends AppCompatActivity
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.get_btn:
-                new Thread(new Runnable() {
+                /*new Thread(new Runnable() {
                     @Override
                     public void run() {
                         final String response = getRequest("http://www.baidu.com");
@@ -292,7 +299,18 @@ public class MainActivity extends AppCompatActivity
                             }
                         });
                     }
-                }).start();
+                }).start();*/
+                NetRequest.getRequest(this, "http://www.baidu.com", new NetRequest.CallBack() {
+                    @Override
+                    public void onSuccess(String response) {
+                        tv.setText(response);
+                    }
+
+                    @Override
+                    public void onError(Exception exception, String errorInfo) {
+                        Toast.makeText(MainActivity.this,"post error",Toast.LENGTH_SHORT).show();
+                    }
+                });
                 break;
             case R.id.downloadImg_btn:
                 new Thread(new Runnable() {
@@ -315,21 +333,58 @@ public class MainActivity extends AppCompatActivity
                 }).start();
                 break;
             case R.id.post_btn:
-                new Thread(new Runnable() {
+                /*new Thread(new Runnable() {
                     @Override
                     public void run() {
                         HashMap<String,String> params =new HashMap<>();
                         params.put("page","1");
                         params.put("count","5");
-                        final String response = postRequest("http://redrock.alien95.cn/know/getQuestionList.php", params);
+                        final String response = postRequest(API.GetQuestions, params);
+                        final Question.QuestionResult questionResult = new Gson().fromJson(response,Question.QuestionResult.class);
                         tv.post(new Runnable() {
                             @Override
                             public void run() {
-                                tv.setText(response);
+                                tv.setText(questionResult.getQuestions()[0].toString());
                             }
                         });
                     }
-                }).start();
+                }).start();*/
+                HashMap<String,String> params =new HashMap<>();
+                params.put("page", "1");
+                params.put("count", "5");
+                NetRequest.postRequest(this, API.GetQuestions, params, Question.QuestionResult.class, new NetRequest.BeanCallback<Question.QuestionResult>() {
+                    @Override
+                    public void onSuccess(Question.QuestionResult response) {
+                        tv.setText(response.getQuestions()[0].toString());
+                    }
+
+                    @Override
+                    public void onError(Exception exception, String errorInfo) {
+
+                    }
+                });
+                /*NetRequest.postRequest(this, API.GetQuestions, params, new NetRequest.CallBack() {
+                    @Override
+                    public void onSuccess(String response) {
+                        tv.setText(response);
+                    }
+
+                    @Override
+                    public void onError(Exception exception, String errorInfo) {
+                        Toast.makeText(MainActivity.this,"post error",Toast.LENGTH_SHORT).show();
+                    }
+                });*/
+                /*QuestionModel.getInstance().getQuestion(this, "1", "20", new ModelCallback<Question.QuestionResult>() {
+                    @Override
+                    public void onSuccess(Question.QuestionResult response) {
+                        tv.setText(response.getQuestions()[0].toString());
+                    }
+
+                    @Override
+                    public void onError(Exception e, String errorInfo) {
+
+                    }
+                });*/
                 break;
         }
     }
