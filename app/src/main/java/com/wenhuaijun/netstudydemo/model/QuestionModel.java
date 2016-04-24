@@ -14,6 +14,7 @@ import java.util.HashMap;
 public class QuestionModel {
     private static QuestionModel model;
     public static synchronized  QuestionModel getInstance(){
+
         if(model ==null){
             model = new QuestionModel();
         }

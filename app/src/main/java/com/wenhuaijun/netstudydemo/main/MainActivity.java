@@ -374,7 +374,7 @@ public class MainActivity extends AppCompatActivity
                         Toast.makeText(MainActivity.this,"post error",Toast.LENGTH_SHORT).show();
                     }
                 });*/
-                /*QuestionModel.getInstance().getQuestion(this, "1", "20", new ModelCallback<Question.QuestionResult>() {
+                QuestionModel.getInstance().getQuestion(this, "1", "20", new ModelCallback<Question.QuestionResult>() {
                     @Override
                     public void onSuccess(Question.QuestionResult response) {
                         tv.setText(response.getQuestions()[0].toString());
@@ -384,7 +384,7 @@ public class MainActivity extends AppCompatActivity
                     public void onError(Exception e, String errorInfo) {
 
                     }
-                });*/
+                });
                 break;
         }
     }
